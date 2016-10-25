@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="CustomersModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="客戶資料Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="sysdiagrams">
           <Key>
             <PropertyRef Name="diagram_id" />
@@ -26,6 +26,7 @@
           <Property Name="傳真" Type="nvarchar" MaxLength="50" />
           <Property Name="地址" Type="nvarchar" MaxLength="100" />
           <Property Name="Email" Type="nvarchar" MaxLength="250" />
+          <Property Name="Is刪除" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="客戶銀行資訊">
           <Key>
@@ -38,6 +39,7 @@
           <Property Name="分行代碼" Type="int" />
           <Property Name="帳戶名稱" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="帳戶號碼" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Is刪除" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="客戶聯絡人">
           <Key>
@@ -50,6 +52,17 @@
           <Property Name="Email" Type="nvarchar" MaxLength="250" Nullable="false" />
           <Property Name="手機" Type="nvarchar" MaxLength="50" />
           <Property Name="電話" Type="nvarchar" MaxLength="50" />
+          <Property Name="Is刪除" Type="bit" Nullable="false" />
+        </EntityType>
+        <!--產生期間發現錯誤:
+警告 6002: 資料表/檢視 'D:\PAULHUANG\MVC5_PROJECT\WEEK01\HOMEWORK01\HOMEWORK01\APP_DATA\客戶資料.MDF.dbo.vw_CustomerOverView' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+        <EntityType Name="vw_CustomerOverView">
+          <Key>
+            <PropertyRef Name="客戶名稱" />
+          </Key>
+          <Property Name="客戶名稱" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="BankTotal" Type="int" />
+          <Property Name="ContactTotal" Type="int" />
         </EntityType>
         <Association Name="FK_客戶銀行資訊_客戶資料">
           <End Role="客戶資料" Type="Self.客戶資料" Multiplicity="1" />
@@ -106,11 +119,18 @@
           <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
-        <EntityContainer Name="CustomersModelStoreContainer">
+        <EntityContainer Name="客戶資料ModelStoreContainer">
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="客戶資料" EntityType="Self.客戶資料" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="客戶銀行資訊" EntityType="Self.客戶銀行資訊" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="客戶聯絡人" EntityType="Self.客戶聯絡人" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="vw_CustomerOverView" EntityType="Self.vw_CustomerOverView" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_CustomerOverView].[客戶名稱] AS [客戶名稱], 
+    [vw_CustomerOverView].[BankTotal] AS [BankTotal], 
+    [vw_CustomerOverView].[ContactTotal] AS [ContactTotal]
+    FROM [dbo].[vw_CustomerOverView] AS [vw_CustomerOverView]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK_客戶銀行資訊_客戶資料" Association="Self.FK_客戶銀行資訊_客戶資料">
             <End Role="客戶資料" EntitySet="客戶資料" />
             <End Role="客戶銀行資訊" EntitySet="客戶銀行資訊" />
@@ -120,11 +140,10 @@
             <End Role="客戶聯絡人" EntitySet="客戶聯絡人" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="CustomersModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="客戶資料Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="sysdiagram">
           <Key>
             <PropertyRef Name="diagram_id" />
@@ -148,6 +167,7 @@
           <Property Name="Email" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="客戶銀行資訊" Relationship="Self.FK_客戶銀行資訊_客戶資料" FromRole="客戶資料" ToRole="客戶銀行資訊" />
           <NavigationProperty Name="客戶聯絡人" Relationship="Self.FK_客戶聯絡人_客戶資料" FromRole="客戶資料" ToRole="客戶聯絡人" />
+          <Property Name="Is刪除" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="客戶銀行資訊">
           <Key>
@@ -161,6 +181,7 @@
           <Property Name="帳戶名稱" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="帳戶號碼" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="客戶資料" Relationship="Self.FK_客戶銀行資訊_客戶資料" FromRole="客戶銀行資訊" ToRole="客戶資料" />
+          <Property Name="Is刪除" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="客戶聯絡人">
           <Key>
@@ -174,6 +195,7 @@
           <Property Name="手機" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="電話" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="客戶資料" Relationship="Self.FK_客戶聯絡人_客戶資料" FromRole="客戶聯絡人" ToRole="客戶資料" />
+          <Property Name="Is刪除" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_客戶銀行資訊_客戶資料">
           <End Role="客戶資料" Type="Self.客戶資料" Multiplicity="1" />
@@ -199,7 +221,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="CustomerMetaDataEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="CustomersMetadataEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
           <EntitySet Name="客戶資料" EntityType="Self.客戶資料" />
           <EntitySet Name="客戶銀行資訊" EntityType="Self.客戶銀行資訊" />
@@ -228,11 +250,11 @@
             <Parameter Name="diagramname" Mode="In" Type="String" />
             <Parameter Name="owner_id" Mode="In" Type="Int32" />
           </FunctionImport>
-          <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(CustomersModel.sp_helpdiagramdefinition_Result)">
+          <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(客戶資料Model.sp_helpdiagramdefinition_Result)">
             <Parameter Name="diagramname" Mode="In" Type="String" />
             <Parameter Name="owner_id" Mode="In" Type="Int32" />
           </FunctionImport>
-          <FunctionImport Name="sp_helpdiagrams" ReturnType="Collection(CustomersModel.sp_helpdiagrams_Result)">
+          <FunctionImport Name="sp_helpdiagrams" ReturnType="Collection(客戶資料Model.sp_helpdiagrams_Result)">
             <Parameter Name="diagramname" Mode="In" Type="String" />
             <Parameter Name="owner_id" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -242,6 +264,7 @@
             <Parameter Name="new_diagramname" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sp_upgraddiagrams" />
+          <EntitySet Name="vw_CustomerOverView" EntityType="客戶資料Model.vw_CustomerOverView" />
         </EntityContainer>
         <ComplexType Name="sp_helpdiagramdefinition_Result">
           <Property Type="Int32" Name="version" Nullable="true" />
@@ -254,14 +277,22 @@
           <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
           <Property Type="Int32" Name="OwnerID" Nullable="false" />
         </ComplexType>
+        <EntityType Name="vw_CustomerOverView">
+          <Key>
+            <PropertyRef Name="客戶名稱" />
+          </Key>
+          <Property Name="客戶名稱" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="BankTotal" Type="Int32" />
+          <Property Name="ContactTotal" Type="Int32" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="CustomersModelStoreContainer" CdmEntityContainer="CustomerMetaDataEntities">
+        <EntityContainerMapping StorageEntityContainer="客戶資料ModelStoreContainer" CdmEntityContainer="CustomersMetadataEntities">
           <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="CustomersModel.sysdiagram">
+            <EntityTypeMapping TypeName="客戶資料Model.sysdiagram">
               <MappingFragment StoreEntitySet="sysdiagrams">
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
@@ -272,8 +303,9 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="客戶資料">
-            <EntityTypeMapping TypeName="CustomersModel.客戶資料">
+            <EntityTypeMapping TypeName="客戶資料Model.客戶資料">
               <MappingFragment StoreEntitySet="客戶資料">
+                <ScalarProperty Name="Is刪除" ColumnName="Is刪除" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="客戶名稱" ColumnName="客戶名稱" />
                 <ScalarProperty Name="統一編號" ColumnName="統一編號" />
@@ -285,8 +317,9 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="客戶銀行資訊">
-            <EntityTypeMapping TypeName="CustomersModel.客戶銀行資訊">
+            <EntityTypeMapping TypeName="客戶資料Model.客戶銀行資訊">
               <MappingFragment StoreEntitySet="客戶銀行資訊">
+                <ScalarProperty Name="Is刪除" ColumnName="Is刪除" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="客戶Id" ColumnName="客戶Id" />
                 <ScalarProperty Name="銀行名稱" ColumnName="銀行名稱" />
@@ -298,8 +331,9 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="客戶聯絡人">
-            <EntityTypeMapping TypeName="CustomersModel.客戶聯絡人">
+            <EntityTypeMapping TypeName="客戶資料Model.客戶聯絡人">
               <MappingFragment StoreEntitySet="客戶聯絡人">
+                <ScalarProperty Name="Is刪除" ColumnName="Is刪除" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="客戶Id" ColumnName="客戶Id" />
                 <ScalarProperty Name="職稱" ColumnName="職稱" />
@@ -310,20 +344,20 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="sp_alterdiagram" FunctionName="CustomersModel.Store.sp_alterdiagram" />
-          <FunctionImportMapping FunctionImportName="sp_creatediagram" FunctionName="CustomersModel.Store.sp_creatediagram" />
-          <FunctionImportMapping FunctionImportName="sp_dropdiagram" FunctionName="CustomersModel.Store.sp_dropdiagram" />
-          <FunctionImportMapping FunctionImportName="sp_helpdiagramdefinition" FunctionName="CustomersModel.Store.sp_helpdiagramdefinition">
+          <FunctionImportMapping FunctionImportName="sp_alterdiagram" FunctionName="客戶資料Model.Store.sp_alterdiagram" />
+          <FunctionImportMapping FunctionImportName="sp_creatediagram" FunctionName="客戶資料Model.Store.sp_creatediagram" />
+          <FunctionImportMapping FunctionImportName="sp_dropdiagram" FunctionName="客戶資料Model.Store.sp_dropdiagram" />
+          <FunctionImportMapping FunctionImportName="sp_helpdiagramdefinition" FunctionName="客戶資料Model.Store.sp_helpdiagramdefinition">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="CustomersModel.sp_helpdiagramdefinition_Result">
+              <ComplexTypeMapping TypeName="客戶資料Model.sp_helpdiagramdefinition_Result">
                 <ScalarProperty Name="version" ColumnName="version" />
                 <ScalarProperty Name="definition" ColumnName="definition" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="sp_helpdiagrams" FunctionName="CustomersModel.Store.sp_helpdiagrams">
+          <FunctionImportMapping FunctionImportName="sp_helpdiagrams" FunctionName="客戶資料Model.Store.sp_helpdiagrams">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="CustomersModel.sp_helpdiagrams_Result">
+              <ComplexTypeMapping TypeName="客戶資料Model.sp_helpdiagrams_Result">
                 <ScalarProperty Name="Database" ColumnName="Database" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
@@ -332,8 +366,17 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="CustomersModel.Store.sp_renamediagram" />
-          <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="CustomersModel.Store.sp_upgraddiagrams" />
+          <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="客戶資料Model.Store.sp_renamediagram" />
+          <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="客戶資料Model.Store.sp_upgraddiagrams" />
+          <EntitySetMapping Name="vw_CustomerOverView">
+            <EntityTypeMapping TypeName="客戶資料Model.vw_CustomerOverView">
+              <MappingFragment StoreEntitySet="vw_CustomerOverView">
+                <ScalarProperty Name="ContactTotal" ColumnName="ContactTotal" />
+                <ScalarProperty Name="BankTotal" ColumnName="BankTotal" />
+                <ScalarProperty Name="客戶名稱" ColumnName="客戶名稱" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

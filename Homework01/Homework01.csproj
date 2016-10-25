@@ -208,6 +208,9 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CustomerBankController.cs" />
+    <Compile Include="Controllers\CustomerContactController.cs" />
+    <Compile Include="Controllers\CustomerInfoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
@@ -240,6 +243,9 @@
     <Compile Include="Models\sysdiagram.cs">
       <DependentUpon>CustomersModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\vw_CustomerOverView.cs">
+      <DependentUpon>CustomersModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\客戶聯絡人.cs">
       <DependentUpon>CustomersModel.tt</DependentUpon>
     </Compile>
@@ -253,10 +259,6 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\客戶資料.mdf" />
-    <Content Include="App_Data\客戶資料_log.ldf">
-      <DependentUpon>客戶資料.mdf</DependentUpon>
-    </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />
@@ -333,8 +335,25 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\CustomerInfo\Create.cshtml" />
+    <Content Include="Views\CustomerInfo\Delete.cshtml" />
+    <Content Include="Views\CustomerInfo\Details.cshtml" />
+    <Content Include="Views\CustomerInfo\Edit.cshtml" />
+    <Content Include="Views\CustomerInfo\Index.cshtml" />
+    <Content Include="Views\CustomerBank\Create.cshtml" />
+    <Content Include="Views\CustomerBank\Delete.cshtml" />
+    <Content Include="Views\CustomerBank\Details.cshtml" />
+    <Content Include="Views\CustomerBank\Edit.cshtml" />
+    <Content Include="Views\CustomerBank\Index.cshtml" />
+    <Content Include="Views\CustomerContact\Create.cshtml" />
+    <Content Include="Views\CustomerContact\Delete.cshtml" />
+    <Content Include="Views\CustomerContact\Details.cshtml" />
+    <Content Include="Views\CustomerContact\Edit.cshtml" />
+    <Content Include="Views\CustomerContact\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
