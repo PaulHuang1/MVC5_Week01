@@ -11,11 +11,14 @@ namespace Homework01.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class vw_CustomerOverView
     {
         public string 客戶名稱 { get; set; }
+        [Display(Name ="銀行帳戶數量")]
         public Nullable<int> BankTotal { get; set; }
+        [Display(Name = "聯絡人數量")]
         public Nullable<int> ContactTotal { get; set; }
     }
 }

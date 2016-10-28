@@ -11,8 +11,9 @@ namespace Homework01.Models
 {
     using System;
     using System.Collections.Generic;
-    
-    public partial class 客戶資料
+    using System.ComponentModel.DataAnnotations;
+
+    public partial class 客戶資料:IValidatableObject
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public 客戶資料()
@@ -22,11 +23,18 @@ namespace Homework01.Models
         }
     
         public int Id { get; set; }
+        [Required]
+        [StringLength(30, ErrorMessage = "欄位長度不得超過30字元")]
         public string 客戶名稱 { get; set; }
+        [Required]
         public string 統一編號 { get; set; }
+        [Required]
+        [RegularExpression(@"\d{4}-\d{6}", ErrorMessage ="電話格式錯誤;請依照以下格式:09xx-xxxxxx")]
         public string 電話 { get; set; }
         public string 傳真 { get; set; }
         public string 地址 { get; set; }
+        [DataType(DataType.EmailAddress)]
+        [EmailAddress(ErrorMessage = "請輸入正確信箱格式")]
         public string Email { get; set; }
         public bool Is刪除 { get; set; }
     
@@ -34,5 +42,14 @@ namespace Homework01.Models
         public virtual ICollection<客戶銀行資訊> 客戶銀行資訊 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<客戶聯絡人> 客戶聯絡人 { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if(this.統一編號.Length != 8)
+            {
+                yield return new ValidationResult("統一編號請輸入8位數", new string[] { "統一編號" });
+            }
+            yield break;
+        }
     }
 }

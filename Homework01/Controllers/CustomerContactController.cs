@@ -58,9 +58,14 @@ namespace Homework01.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶聯絡人.Add(客戶聯絡人);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                var isRepeat = db.客戶聯絡人.Where(c => c.客戶Id == 客戶聯絡人.客戶Id && c.Email == 客戶聯絡人.Email && c.Id != 客戶聯絡人.Id).Count();
+                if(isRepeat == 0)
+                {
+                    db.客戶聯絡人.Add(客戶聯絡人);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                ModelState.AddModelError("Email", "該客戶聯絡人已經有相同信箱帳號存在!!");
             }
 
             ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
@@ -92,9 +97,14 @@ namespace Homework01.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(客戶聯絡人).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                var isRepeat = db.客戶聯絡人.Where(c => c.客戶Id == 客戶聯絡人.客戶Id && c.Email == 客戶聯絡人.Email && c.Id != 客戶聯絡人.Id).Count();
+                if (isRepeat == 0)
+                {
+                    db.Entry(客戶聯絡人).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                ModelState.AddModelError("Email", "該客戶聯絡人已經有相同信箱帳號存在!!");
             }
             ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);

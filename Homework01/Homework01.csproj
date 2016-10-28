@@ -350,6 +350,7 @@
     <Content Include="Views\CustomerContact\Details.cshtml" />
     <Content Include="Views\CustomerContact\Edit.cshtml" />
     <Content Include="Views\CustomerContact\Index.cshtml" />
+    <Content Include="Views\Home\CustomerOverView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

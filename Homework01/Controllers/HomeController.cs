@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Homework01.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,9 +9,16 @@ namespace Homework01.Controllers
 {
     public class HomeController : Controller
     {
+        private CustomersMetadataEntities db = new CustomersMetadataEntities();
         public ActionResult Index()
         {
             return View();
+        }
+
+        public ActionResult CustomerOverView()
+        {
+            var customerOverView = db.vw_CustomerOverView;
+            return View(customerOverView);
         }
 
         public ActionResult About()
