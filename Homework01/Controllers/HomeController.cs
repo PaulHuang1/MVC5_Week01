@@ -14,7 +14,7 @@ namespace Homework01.Controllers
         {
             return View();
         }
-
+        [ChildActionOnly]
         public ActionResult CustomerOverView()
         {
             var customerOverView = db.vw_CustomerOverView;

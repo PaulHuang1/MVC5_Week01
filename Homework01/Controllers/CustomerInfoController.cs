@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Homework01.Models;
+using System.Data.Entity.Validation;
 
 namespace Homework01.Controllers
 {
@@ -119,7 +120,19 @@ namespace Homework01.Controllers
             客戶資料 客戶資料 = db.客戶資料.Find(id);
             //db.客戶資料.Remove(客戶資料);
             客戶資料.Is刪除 = true;
+            var contactList = db.客戶聯絡人.Where(co => co.客戶Id == 客戶資料.Id);
+            foreach (var contact in contactList)
+            {
+                contact.Is刪除 = true;
+            }
+            var bankList = db.客戶銀行資訊.Where(co => co.客戶Id == 客戶資料.Id);
+            foreach (var bank in bankList)
+            {
+                bank.Is刪除 = true;
+            }
+
             db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
