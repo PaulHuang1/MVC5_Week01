@@ -9,7 +9,7 @@ namespace Homework01.Controllers
 {
     public class HomeController : Controller
     {
-        private CustomersMetadataEntities db = new CustomersMetadataEntities();
+        vw_CustomerOverViewRepository _customerOverViewRepository = RepositoryHelper.Getvw_CustomerOverViewRepository();
         public ActionResult Index()
         {
             return View();
@@ -17,7 +17,7 @@ namespace Homework01.Controllers
         [ChildActionOnly]
         public ActionResult CustomerOverView()
         {
-            var customerOverView = db.vw_CustomerOverView;
+            var customerOverView = _customerOverViewRepository.All();
             return View(customerOverView);
         }
 

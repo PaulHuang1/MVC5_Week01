@@ -17,7 +17,6 @@ namespace Homework01.Models
     {
         public int Id { get; set; }
         public int 客戶Id { get; set; }
-
         [Required]
         [StringLength(30, ErrorMessage = "欄位長度不得超過30字元")]
         public string 職稱 { get; set; }
@@ -26,13 +25,14 @@ namespace Homework01.Models
         public string 姓名 { get; set; }
         [Required]
         [DataType(DataType.EmailAddress)]
-        [EmailAddress(ErrorMessage ="請輸入正確信箱格式")]
+        [EmailAddress(ErrorMessage = "請輸入正確信箱格式")]
         public string Email { get; set; }
         [Required]
-        [RegularExpression(@"\d{4}-\d{6}", ErrorMessage ="電話格式錯誤;請依照以下格式:09xx-xxxxxx")]
+        [RegularExpression(@"\d{4}-\d{6}", ErrorMessage = "手機格式錯誤;請依照以下格式:09xx-xxxxxx")]
         public string 手機 { get; set; }
         public string 電話 { get; set; }
         public bool Is刪除 { get; set; }
+    
         public virtual 客戶資料 客戶資料 { get; set; }
     }
 }

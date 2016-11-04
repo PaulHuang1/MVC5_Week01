@@ -12,16 +12,17 @@ namespace Homework01.Controllers
 {
     public class CustomerContactController : Controller
     {
-        private CustomersMetadataEntities db = new CustomersMetadataEntities();
+        客戶聯絡人Repository _customerContactRepository = RepositoryHelper.Get客戶聯絡人Repository();
+        客戶資料Repository _customerRepository = RepositoryHelper.Get客戶資料Repository();
 
         // GET: CustomerContact
         public ActionResult Index(string search)
         {
-            var 客戶聯絡人 = db.客戶聯絡人.Include(客 => 客.客戶資料).Where(c=>c.Is刪除 == false);
+            var 客戶聯絡人 = _customerContactRepository.All();
 
             if (!string.IsNullOrEmpty(search))
             {
-                客戶聯絡人 = 客戶聯絡人.Where(c => c.姓名.Contains(search));
+                客戶聯絡人 = _customerContactRepository.Find(search);
             }
 
             return View(客戶聯絡人.ToList());
@@ -34,7 +35,7 @@ namespace Homework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 = _customerContactRepository.Find(id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
@@ -45,7 +46,7 @@ namespace Homework01.Controllers
         // GET: CustomerContact/Create
         public ActionResult Create()
         {
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(_customerRepository.All(), "Id", "客戶名稱");
             return View();
         }
 
@@ -58,17 +59,15 @@ namespace Homework01.Controllers
         {
             if (ModelState.IsValid)
             {
-                var isRepeat = db.客戶聯絡人.Where(c => c.客戶Id == 客戶聯絡人.客戶Id && c.Email == 客戶聯絡人.Email && c.Id != 客戶聯絡人.Id).Count();
-                if(isRepeat == 0)
+                if (_customerContactRepository.IsRepeat(客戶聯絡人))
                 {
-                    db.客戶聯絡人.Add(客戶聯絡人);
-                    db.SaveChanges();
+                    _customerContactRepository.Add(客戶聯絡人);
                     return RedirectToAction("Index");
                 }
                 ModelState.AddModelError("Email", "該客戶聯絡人已經有相同信箱帳號存在!!");
             }
 
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
+            ViewBag.客戶Id = new SelectList(_customerRepository.All(), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
 
@@ -79,12 +78,12 @@ namespace Homework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 = _customerContactRepository.Find(id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
+            ViewBag.客戶Id = new SelectList(_customerRepository.All(), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
 
@@ -97,16 +96,14 @@ namespace Homework01.Controllers
         {
             if (ModelState.IsValid)
             {
-                var isRepeat = db.客戶聯絡人.Where(c => c.客戶Id == 客戶聯絡人.客戶Id && c.Email == 客戶聯絡人.Email && c.Id != 客戶聯絡人.Id).Count();
-                if (isRepeat == 0)
+                if (_customerContactRepository.IsRepeat(客戶聯絡人))
                 {
-                    db.Entry(客戶聯絡人).State = EntityState.Modified;
-                    db.SaveChanges();
+                    _customerContactRepository.edit(客戶聯絡人);
                     return RedirectToAction("Index");
                 }
                 ModelState.AddModelError("Email", "該客戶聯絡人已經有相同信箱帳號存在!!");
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
+            ViewBag.客戶Id = new SelectList(_customerRepository.All(), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
 
@@ -117,7 +114,7 @@ namespace Homework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 = _customerContactRepository.Find(id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
@@ -130,10 +127,7 @@ namespace Homework01.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
-            //db.客戶聯絡人.Remove(客戶聯絡人);
-            客戶聯絡人.Is刪除 = true;
-            db.SaveChanges();
+            _customerContactRepository.Delete(id);
             return RedirectToAction("Index");
         }
 
@@ -141,7 +135,7 @@ namespace Homework01.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _customerContactRepository.UnitOfWork.Context.Dispose();
             }
             base.Dispose(disposing);
         }

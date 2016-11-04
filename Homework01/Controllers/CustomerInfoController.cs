@@ -13,16 +13,18 @@ namespace Homework01.Controllers
 {
     public class CustomerInfoController : Controller
     {
-        private CustomersMetadataEntities db = new CustomersMetadataEntities();
+        客戶資料Repository _customerRepository = RepositoryHelper.Get客戶資料Repository();
 
         // GET: CustomerInfo
         public ActionResult Index(string search)
         {
-            var customerInfoList = db.客戶資料.Where(c => c.Is刪除 == false);
+            ViewBag.Customerclassification = new SelectList(new string[] { "VIP", "Member", "BlackList" });
+
+            var customerInfoList = _customerRepository.All();
 
             if (!string.IsNullOrEmpty(search))
             {
-                customerInfoList = customerInfoList.Where(c => c.客戶名稱.Contains(search));
+                customerInfoList = _customerRepository.Find(search);
             }
 
             return View(customerInfoList.ToList());
@@ -35,7 +37,7 @@ namespace Homework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
+            客戶資料 客戶資料 = _customerRepository.Find(id.Value);
             if (客戶資料 == null)
             {
                 return HttpNotFound();
@@ -58,8 +60,7 @@ namespace Homework01.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶資料.Add(客戶資料);
-                db.SaveChanges();
+                _customerRepository.Add(客戶資料);
                 return RedirectToAction("Index");
             }
 
@@ -73,7 +74,7 @@ namespace Homework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
+            客戶資料 客戶資料 = _customerRepository.Find(id.Value);
             if (客戶資料 == null)
             {
                 return HttpNotFound();
@@ -90,8 +91,7 @@ namespace Homework01.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(客戶資料).State = EntityState.Modified;
-                db.SaveChanges();
+                _customerRepository.Edit(客戶資料);
                 return RedirectToAction("Index");
             }
             return View(客戶資料);
@@ -104,7 +104,7 @@ namespace Homework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
+            客戶資料 客戶資料 = _customerRepository.Find(id.Value);
             if (客戶資料 == null)
             {
                 return HttpNotFound();
@@ -117,21 +117,7 @@ namespace Homework01.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
-            //db.客戶資料.Remove(客戶資料);
-            客戶資料.Is刪除 = true;
-            var contactList = db.客戶聯絡人.Where(co => co.客戶Id == 客戶資料.Id);
-            foreach (var contact in contactList)
-            {
-                contact.Is刪除 = true;
-            }
-            var bankList = db.客戶銀行資訊.Where(co => co.客戶Id == 客戶資料.Id);
-            foreach (var bank in bankList)
-            {
-                bank.Is刪除 = true;
-            }
-
-            db.SaveChanges();
+            _customerRepository.Delete(id);
 
             return RedirectToAction("Index");
         }
@@ -140,7 +126,7 @@ namespace Homework01.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _customerRepository.UnitOfWork.Context.Dispose();
             }
             base.Dispose(disposing);
         }

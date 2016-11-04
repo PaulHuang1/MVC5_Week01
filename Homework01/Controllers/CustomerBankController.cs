@@ -12,16 +12,17 @@ namespace Homework01.Controllers
 {
     public class CustomerBankController : Controller
     {
-        private CustomersMetadataEntities db = new CustomersMetadataEntities();
+        客戶銀行資訊Repository _customerBankRepository = RepositoryHelper.Get客戶銀行資訊Repository();
+        客戶資料Repository _customerRepository = RepositoryHelper.Get客戶資料Repository();
 
         // GET: CustomerBank
         public ActionResult Index(string search)
         {
-            var 客戶銀行資訊 = db.客戶銀行資訊.Include(客 => 客.客戶資料).Where(c=>c.Is刪除 == false);
+            var 客戶銀行資訊 = _customerBankRepository.All();
 
             if (!string.IsNullOrEmpty(search))
             {
-                客戶銀行資訊 = 客戶銀行資訊.Where(b => b.銀行名稱.Contains(search));
+                客戶銀行資訊 = _customerBankRepository.Find(search);
             }
 
             return View(客戶銀行資訊.ToList());
@@ -34,7 +35,7 @@ namespace Homework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
+            客戶銀行資訊 客戶銀行資訊 = _customerBankRepository.Find(id.Value);
             if (客戶銀行資訊 == null)
             {
                 return HttpNotFound();
@@ -45,7 +46,7 @@ namespace Homework01.Controllers
         // GET: CustomerBank/Create
         public ActionResult Create()
         {
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(_customerRepository.All(), "Id", "客戶名稱");
             return View();
         }
 
@@ -58,12 +59,11 @@ namespace Homework01.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶銀行資訊.Add(客戶銀行資訊);
-                db.SaveChanges();
+                _customerBankRepository.Add(客戶銀行資訊);
                 return RedirectToAction("Index");
             }
 
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
+            ViewBag.客戶Id = new SelectList(_customerRepository.All(), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
             return View(客戶銀行資訊);
         }
 
@@ -74,12 +74,12 @@ namespace Homework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
+            客戶銀行資訊 客戶銀行資訊 = _customerBankRepository.Find(id.Value);
             if (客戶銀行資訊 == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
+            ViewBag.客戶Id = new SelectList(_customerRepository.All(), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
             return View(客戶銀行資訊);
         }
 
@@ -92,11 +92,10 @@ namespace Homework01.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(客戶銀行資訊).State = EntityState.Modified;
-                db.SaveChanges();
+                _customerBankRepository.Edit(客戶銀行資訊);
                 return RedirectToAction("Index");
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
+            ViewBag.客戶Id = new SelectList(_customerRepository.All(), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
             return View(客戶銀行資訊);
         }
 
@@ -107,7 +106,7 @@ namespace Homework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
+            客戶銀行資訊 客戶銀行資訊 = _customerBankRepository.Find(id.Value);
             if (客戶銀行資訊 == null)
             {
                 return HttpNotFound();
@@ -120,10 +119,7 @@ namespace Homework01.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
-            //db.客戶銀行資訊.Remove(客戶銀行資訊);
-            客戶銀行資訊.Is刪除 = true;
-            db.SaveChanges();
+            _customerBankRepository.Delete(id);
             return RedirectToAction("Index");
         }
 
@@ -131,7 +127,7 @@ namespace Homework01.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _customerBankRepository.UnitOfWork.Context.Dispose();
             }
             base.Dispose(disposing);
         }

@@ -29,7 +29,7 @@ namespace Homework01.Models
         [Required]
         public string 統一編號 { get; set; }
         [Required]
-        [RegularExpression(@"\d{4}-\d{6}", ErrorMessage ="電話格式錯誤;請依照以下格式:09xx-xxxxxx")]
+        [RegularExpression(@"\d{4}-\d{6}", ErrorMessage = "電話格式錯誤;請依照以下格式:09xx-xxxxxx")]
         public string 電話 { get; set; }
         public string 傳真 { get; set; }
         public string 地址 { get; set; }
@@ -37,6 +37,9 @@ namespace Homework01.Models
         [EmailAddress(ErrorMessage = "請輸入正確信箱格式")]
         public string Email { get; set; }
         public bool Is刪除 { get; set; }
+        public string 帳號 { get; set; }
+        public string 密碼 { get; set; }
+        public string 客戶分類 { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<客戶銀行資訊> 客戶銀行資訊 { get; set; }
@@ -45,7 +48,7 @@ namespace Homework01.Models
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if(this.統一編號.Length != 8)
+            if (this.統一編號.Length != 8)
             {
                 yield return new ValidationResult("統一編號請輸入8位數", new string[] { "統一編號" });
             }
